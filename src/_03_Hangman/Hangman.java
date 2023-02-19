@@ -39,17 +39,68 @@ public class Hangman implements KeyListener{
 		a.numWords = d;
 		
 		
-		//while(cont) {
-			a.run();
-		//}
-		System.exit(-1);
+		
+		a.run();
+		
+		//System.exit(-1);
 			
 	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {					
+		save = e.getKeyChar();
+		
+		boolean wrong = true; 
+		
+		for(int i = 0; i < imPopped.length(); i++) {
+			if(save == imPopped.charAt(i)) {
+				wrong = false; 
+			}
+		}
+		
+		if(wrong && lives == 1) {
+			JOptionPane.showMessageDialog(null, "Game Over! Thanks for playing!");
+		}
+		else if(wrong){
+			lives--;
+		}
+		else {
+			
+			StringBuilder bob = new StringBuilder();
+			
+			for(int j = 0; j < imPopped.length(); j++) {
+				if(imPopped.charAt(j) == save) {
+					bob.append(save);
+				}
+				else {
+					bob.append("_");
+				}
+			}
+			
+			
+			String newdisplay = bob.toString();
+			
+			underscores.setText(newdisplay);
+			
+			panel.add(underscores);
+			
+			f.pack();
+			// RESET DISPLAY HERE
+		}
+	} 
+	
 	private void run() {
+		
+		
+		
 		f.setVisible(true);
 		f.add(panel);
 		f.addKeyListener(this);
 		panel.add(underscores);
+		
+		f.addKeyListener(this);
+		
+		
 		
 		if(numWords < 1 || numWords > 100) {
 			JOptionPane.showMessageDialog(null, "Game Over! Try to insert a valid integer next time.");		
@@ -73,44 +124,29 @@ public class Hangman implements KeyListener{
 		
 		for(int i = 0; i < numWords; i++) {
 			imPopped = words.pop();
-			System.out.println(imPopped);
+			System.out.println(imPopped); // what is this doing here lol
 			String tmp = "";
 			for(int k = 0; k < imPopped.length(); k++) {
-			tmp += '_';
+				tmp += '_';
 				
 			}
 			underscores.setText(tmp);
+			
+			
+			panel.add(underscores);
 		
 			
 			f.pack();
-		}
-			
-		
-		boolean wrong = true; 
-		
-		for(int i = 0; i < imPopped.length(); i++) {
-			if(save == imPopped.charAt(save)) {
-				wrong = false; 
-			}
-		}
-		
-		if(wrong && lives == 1) {
-			JOptionPane.showMessageDialog(null, "Game Over! Thanks for playing!");
-		}
-		else if(wrong){
-			lives--;
-		}
-		else {
-			
-			// RESET DISPLAY HERE
-			
+		}	
 			
 		}
 		
 		
 		
 		
-	}
+	
+	
+					
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -121,30 +157,6 @@ public class Hangman implements KeyListener{
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//System.out.println("keyTyped " + e.toString()) ;						
-		
-		
-		//FUNCTION DISPLAYS WHICH KEY PRESSED
-		
-		save = e.toString().charAt(0);
-		for(int i = 0; i < imPopped.length(); i++) {
-			if(save == imPopped.charAt(i)) {
-				//indexes.add(i);
-				
-				//ENTER USEFUL STUFF HERE
-			}
-			else {
-				//indexes.add(-1); // ignore -1 value when you redisplay
-				//lives--;
-			}
-		}
-		
-		
 		
 	}
 	
@@ -161,4 +173,6 @@ public class Hangman implements KeyListener{
 
 
 
-// version A.4.1
+// A.4.2
+ 
+
