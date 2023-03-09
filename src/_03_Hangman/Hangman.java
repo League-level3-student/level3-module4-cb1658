@@ -14,12 +14,16 @@ public class Hangman implements KeyListener{
 	JFrame f = new JFrame();
 	JPanel panel = new JPanel();
 	JLabel underscores = new JLabel();
+	JLabel liveDisplay = new JLabel("Lives: 10");
 	int numWords; 
+	Stack<String> words = new Stack<String>();
 	String imPopped;
+	ArrayList<Character> knownletters = new ArrayList<Character>();
 	// static boolean cont = true;  idea
-	int lives;
+	int lives = 10;
+	
 	ArrayList<Integer> indexes;
-	char save; 
+	char typedLetter; 
 	
 	public static void main(String [] args) {
 		Hangman a = new Hangman();
@@ -33,6 +37,7 @@ public class Hangman implements KeyListener{
 			int d = Integer.parseInt(b);
 		}catch(NumberFormatException e) {
 			JOptionPane.showMessageDialog(null, "Game Over! Try to insert an *integer* next time.");
+			System.exit(-1);
 		} 
 		int d = Integer.parseInt(b);
 		
@@ -41,51 +46,66 @@ public class Hangman implements KeyListener{
 		
 		
 		a.run();
-		
-		//System.exit(-1);
 			
 	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {					
-		save = e.getKeyChar();
+		typedLetter = e.getKeyChar();
 		
 		boolean wrong = true; 
 		
 		for(int i = 0; i < imPopped.length(); i++) {
-			if(save == imPopped.charAt(i)) {
+			if(typedLetter == imPopped.charAt(i)) {
 				wrong = false; 
 			}
 		}
 		
 		if(wrong && lives == 1) {
+			liveDisplay.setText("GAME OVER");
 			JOptionPane.showMessageDialog(null, "Game Over! Thanks for playing!");
+			
+			System.exit(-1);
 		}
 		else if(wrong){
 			lives--;
+			liveDisplay.setText("Lives: " + lives); 
 		}
 		else {
 			
+			
+			
+			knownletters.add(typedLetter);
+			
 			StringBuilder bob = new StringBuilder();
 			
-			for(int j = 0; j < imPopped.length(); j++) {
-				if(imPopped.charAt(j) == save) {
-					bob.append(save);
-				}
-				else {
-					bob.append("_");
-				}
+			for(int c = 0; c < imPopped.length(); c++) {
+				bob.append("_");
 			}
+			
+			for(int j = 0; j < imPopped.length(); j++) {
+				for(int b = 0; b < knownletters.size(); b++) {
+					if(imPopped.charAt(j) == knownletters.get(b)) {
+						bob.replace(j,j+1,knownletters.get(b)+"");
+					}
+
+				}
+				
+				
+			}
+			
+			
 			
 			
 			String newdisplay = bob.toString();
 			
 			underscores.setText(newdisplay);
 			
-			panel.add(underscores);
+			if(bob.toString().equals(imPopped)) {
+				getNewWord();
+			}
 			
 			f.pack();
-			// RESET DISPLAY HERE
 		}
 	} 
 	
@@ -96,18 +116,18 @@ public class Hangman implements KeyListener{
 		f.setVisible(true);
 		f.add(panel);
 		f.addKeyListener(this);
-		panel.add(underscores);
 		
-		f.addKeyListener(this);
+
 		
 		
 		
 		if(numWords < 1 || numWords > 100) {
-			JOptionPane.showMessageDialog(null, "Game Over! Try to insert a valid integer next time.");		
+			JOptionPane.showMessageDialog(null, "Game Over! Try to insert a valid integer next time.");	
+			System.exit(-1);
 			}
 		
 		
-		Stack<String> words = new Stack<String>();
+		
 		
 		for(int i = 0; i < numWords; i++) {
 			String a = Utilities.readRandomLineFromFile("dictionary.txt");
@@ -122,27 +142,38 @@ public class Hangman implements KeyListener{
 		
 		int lives = 10; 
 		
-		for(int i = 0; i < numWords; i++) {
+		
+		
+		panel.add(underscores);
+	
+		panel.add(liveDisplay);
+		
+		getNewWord();
+		
+			
+		}
+		
+		
+		void getNewWord() {
+			
+			if(words.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Good job, you won! ");
+				System.exit(-1);
+			}
 			imPopped = words.pop();
-			System.out.println(imPopped); // what is this doing here lol
+			System.out.println(imPopped); // cheat-cheat
 			String tmp = "";
 			for(int k = 0; k < imPopped.length(); k++) {
 				tmp += '_';
 				
 			}
+			knownletters.clear();
+			
 			underscores.setText(tmp);
-			
-			
-			panel.add(underscores);
-		
+
 			
 			f.pack();
-		}	
-			
 		}
-		
-		
-		
 		
 	
 	
@@ -163,16 +194,4 @@ public class Hangman implements KeyListener{
 
 	
 } 
-	
-		
-	
-
-	
-	
-
-
-
-
-// A.4.2
- 
 
